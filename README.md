@@ -7,32 +7,54 @@ to develop applications following the Symfony Best Practices.
 Requirements
 ------------
 
-Install [Nix](https://nixos.org/download.html)
-and enable [flakes](https://nixos.wiki/wiki/Flakes) with:
+Install [Nix](https://nixos.org/download.html) and [Direnv](https://direnv.net/docs/installation.html):
+
+```bash
+sh <(curl -L https://nixos.org/nix/install) --no-modify-profile
+bash <(curl -sfL https://direnv.net/install.sh)
+```
+
+Enable [Nix Flakes](https://nixos.wiki/wiki/Flakes):
 
 ```bash
 mkdir -p ~/.config/nix
 echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
 ```
 
-> **Nix** is a system package manager and a functional language which provide reproductible builds and development environments.
+Add the following line at the end of your shell rc file (`~/.bashrc` or `~/.zshrc` ...):
 
-Install [Direnv](https://direnv.net/docs/installation.html)
-and add its [hook into your shell](https://direnv.net/docs/hook.html).
+```bash
+# Load nix
+if [ -e ~/.nix-profile/etc/profile.d/nix.sh ]; then . ~/.nix-profile/etc/profile.d/nix.sh; fi
+```
 
-Reload your shell:
+Add the Direnv hook to your shell:
+
+<details><summary>ZSH</summary>
+
+Add the following line at the end of the `~/.zshrc` file:
+
+```zsh
+eval "$(direnv hook zsh)"
+```
+</details>
+
+<details><summary>BASH</summary>
+
+Add the following line at the end of the `~/.bashrc` file:
+
+```zsh
+eval "$(direnv hook bash)"
+```
+</details>
+
+> Other supported shells: https://direnv.net/docs/hook.html
+
+Finally reload your shell:
 
 ```bash
 exec $SHELL
 ```
-
-Enable `direnv` for this project:
-
-```bash
-direnv allow
-```
-
-> **Direnv** automatically load and unload environment variables in a subshell depending on your current directory. 
 
 Run the project
 ---------------

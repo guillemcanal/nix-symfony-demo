@@ -1,11 +1,11 @@
 .DEFAULT_GOAL := help
 
 vendor: composer.lock
-	composer install
+	composer install || { touch composer.lock; exit 1; }
 	touch vendor
 
 node_modules: yarn.lock
-	yarn install
+	yarn install || { touch yarn.lock; exit 1; }
 	touch node_modules
 
 .PHONY: vendors
