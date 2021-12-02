@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+# Run services declared in $APP_ROOT/infra/services
+main() {
+	shopt -s nullglob
+
+	case $1 in
+		up)
+			for SERVICE in $APP_SERVICES/*; do
+				if ! compgen -G ${SERVICE}/run/*.pid > /dev/null 2>&1; then
+					mkdir -p ${SERVICE}/log
+					nohup ${SERVICE}/exec > ${SERVICE}/log/combined.log 2>&1 &
+				fi
+			done
+			;;
+		down)
+			for PID_FILE in $APP_SERVICES/*/run/*.pid; do
+				kill "$(cat $PID_FILE)"
+			done
+			for SERVICES in $APP_SERVICES/*; do
+				rm -rf ${SERVICES}/{cache,log}
+			done
+			;;
+		logs)
+			local SERVICE="${2:-*}"
+			tail -f $APP_SERVICES/$SERVICE/log/combined.log
+			;;
+		*)
+			echo "Usage: $0 command [arguments]"
+			echo
+			echo "Commands:"
+			echo "  up              Start services"
+			echo "  down            Stop and remove services"
+			echo "  logs [service]  Show services logs"
+			echo
+			echo "Available Services:"
+			for SERVICE in $APP_SERVICES/*;do
+				echo "  $(basename $SERVICE)"
+			done
+			exit 2
+			;;
+	esac
+}
+
+main "$@"

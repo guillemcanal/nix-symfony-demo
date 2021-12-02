@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+mkdir -p ${NGINX_PATH}/{run,cache}
+envsubst '${APP_ROOT} ${NGINX_PORT} ${NGINX_PATH} ${PHP_FPM_PATH}' < ${NGINX_PATH}/config/nginx.tpl.conf >  ${NGINX_PATH}/config/nginx.conf
+ 
+exec nginx -e /dev/fd/2 -p ${NGINX_PATH}/config -c nginx.conf -g 'daemon off;'

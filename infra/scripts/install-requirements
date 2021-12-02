@@ -1,0 +1,64 @@
+#!/usr/bin/env sh
+
+set -e
+
+is_darwin() {
+	case "$(uname -s)" in
+	*darwin* ) true ;;
+	*Darwin* ) true ;;
+	* ) false;;
+	esac
+}
+
+get_distribution() {
+	lsb_dist=""
+	if [ -r /etc/os-release ]; then
+		lsb_dist="$(. /etc/os-release && echo "$ID")"
+	fi
+	if is_darwin; then
+		lsb_dist="macos"
+	fi
+
+	echo "$lsb_dist"
+}
+
+install_nix() {
+	echo "[info] installing nix"
+	curl -L https://nixos.org/nix/install | sh
+}
+
+install_direnv() {
+	echo "[info] installing direnv"
+	case "$(get_distribution)" in
+		alpine)
+			sudo apk add -U direnv
+			;;
+		debian|ubuntu)
+			sudo apt update && sudo apt install -y direnv
+			;;
+		macos)
+			if command -v brew > /dev/null;then
+				brew install direnv
+			fi
+			;;
+		*)
+			echo "[error] can't figure out how to install direnv on your system pal :(" >&2
+			;;
+
+	esac
+}
+
+install_requirements() {
+	if ! command -v curl > /dev/null; then
+		echo "[error] cURL should be installed" >&2
+	fi
+	if ! command -v nix > /dev/null; then
+		install_nix
+	fi
+	if ! command -v direnv > /dev/null; then
+		install_direnv
+	fi
+}
+echo $SHELL
+exit 0
+install_direnv

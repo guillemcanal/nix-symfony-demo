@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+mkdir -p ${PHP_FPM_PATH}/run
+exec php-fpm --pid ${PHP_FPM_PATH}/run/php-fpm.pid --fpm-config ${PHP_FPM_PATH}/config/php-fpm.conf --nodaemonize

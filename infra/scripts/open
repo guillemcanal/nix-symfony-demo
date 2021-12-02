@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Opens a file or URL in the user's preferred application 
+main() {
+	local LOCATION="$1"
+	if command -v xdg-open > /dev/null;then
+		xdg-open $LOCATION
+	elif command -v wslpath > /dev/null;then
+		test -s $LOCATION && LOCATION="$(wslpath -w $LOCATION)"
+		rundll32.exe url.dll,FileProtocolHandler "$LOCATION"
+	elif command -v open > /dev/null;then
+		open $LOCATION
+	else
+		echo "Cannot open $LOCATION" >&2
+	fi
+}
+
+main "$@"
+
