@@ -14,7 +14,7 @@
           config = { allowUnfree = true; };
         };
 
-        php = pkgs.php80.buildEnv {
+        php = pkgs.php81.buildEnv {
           extensions = { all, ... }: with all; [ 
             readline
             dom
